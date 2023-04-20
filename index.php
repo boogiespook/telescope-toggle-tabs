@@ -31,7 +31,8 @@ if ($row['flag'] == "green") {
 } else {
 	$checked = "";
 }
-print '          	<li>' . $row['capability'] . '</li> 
+#print '          	<li class="toggle-label">' . $row['capability'] . ' 
+print '          	<li class="toggle-label"> 
 <label class="pf-c-switch" for="' . $row['id'] . '">
   <input class="pf-c-switch__input" type="checkbox" name="capability-' . $row['id'] . '" id="' . $row['id'] . '" aria-labelledby="' . $row['id'] . '-on" ' . $checked . ' />
   <span class="pf-c-switch__toggle">
@@ -39,6 +40,9 @@ print '          	<li>' . $row['capability'] . '</li>
       <i class="fas fa-check" aria-hidden="true"></i>
     </span>
   </span>
+  <p class="toggle-capability">' . $row['capability'] . '</p>
+  </li>
+  
 </label>';
 }
 }

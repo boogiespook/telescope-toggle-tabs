@@ -45,3 +45,17 @@
 .icon-aperture:before {
   content: "\e900";
 }
+
+
+.toggle-label {
+	padding: 15px;
+}
+
+.toggle-capability {
+	margin-top: -30px;
+   padding-left: 50px;
+   width: 100%;
+}
+
+
+
