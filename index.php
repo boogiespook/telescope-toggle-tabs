@@ -22,6 +22,7 @@ $pg_passwd = getenv('PG_PASSWORD');
 
 $db_connection = pg_connect("host=$pg_host port=5432  dbname=$pg_db user=$pg_user password=$pg_passwd");
 
+
 function putToggles($domain) {
 $qq = "select capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = $domain and capability.flag_id = flag.id;";
 $result = pg_query($qq) or die('Error message: ' . pg_last_error());
@@ -31,7 +32,7 @@ if ($row['flag'] == "green") {
 } else {
 	$checked = "";
 }
-#print '          	<li class="toggle-label">' . $row['capability'] . ' 
+
 print '          	<li class="toggle-label"> 
 <label class="pf-c-switch" for="' . $row['id'] . '">
   <input class="pf-c-switch__input" type="checkbox" name="capability-' . $row['id'] . '" id="' . $row['id'] . '" aria-labelledby="' . $row['id'] . '-on" ' . $checked . ' />
@@ -47,8 +48,48 @@ print '          	<li class="toggle-label">
 }
 }
 
+function putAperture($domainId) {
+# Get total number of capabilities
+$capabilityCount = "select count(capability) as total, domain.description from capability,domain where domain.id = capability.domain_id and domain.id ='" . $domainId . "' group by domain.description;";
+$capabilityCountTotal = pg_query($capabilityCount) or die('Error message: ' . pg_last_error());
+$capabilityRow = pg_fetch_assoc($capabilityCountTotal);
+$totalCapabilities = $capabilityRow['total'];
+$capabilityName = $capabilityRow['description'];
+$greenCount = "select count(flag_id) as totalgreen from capability where domain_id = '" . $domainId . "' and flag_id = '2'";
+$greenTotal = pg_query($greenCount) or die('Error message: ' . pg_last_error());
+$greens = pg_fetch_assoc($greenTotal);
+$totalGreens = $greens['totalgreen'];
+
+# If greens < total, add red aperture
+if ($totalGreens < $totalCapabilities) {
+print "<img src=images/aperture-red-closed.png>";
+} else {
+print "<img src=images/aperture-green.png>";
+}
+
+}
+function putIcon($colour, $capability) {
+if ($colour == 'green') {
+print '
+<span class="pf-c-icon pf-m-inline">
+  <span class="pf-c-icon__content  pf-m-success">
+    <i class="fas fa-check-circle" aria-hidden="true"></i>
+  </span>
+</span>&nbsp;' . $capability . "<br><br>";
+} else {
+print '
+<span class="pf-c-icon pf-m-inline">
+  <span class="pf-c-icon__content pf-m-danger">
+    <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+  </span>
+</span>&nbsp;' . $capability . "<br><br>";
+}
+}
+
 
 ?>    
+    
+    
     
 <div class="pf-c-page">
   <header class="pf-c-page__header">
@@ -65,6 +106,7 @@ print '          	<li class="toggle-label">
 <main class="pf-c-page__main" tabindex="-1">  
     <section class="pf-c-page__main-section pf-m-full-height">
 <div class="tabset">
+
   <!-- Tab 1 -->
   <input type="radio" name="tabset" id="tab1" aria-controls="toggle" checked>
   <label for="tab1">Telescope Toggle</label>
@@ -74,7 +116,11 @@ print '          	<li class="toggle-label">
   <!-- Tab 3 -->
   <input type="radio" name="tabset" id="tab3" aria-controls="methods">
   <label for="tab3">Integration Methods</label>
-  
+  <!-- Tab 4 -->
+  <input type="radio" name="tabset" id="tab4" aria-controls="dashboard">
+  <label for="tab4">Dashboard</label>
+
+<!-- Start of Toggle -->  
   <div class="tab-panels">
     <section id="toggle" class="tab-panel">
     <!-- Start of Toggle -->
@@ -433,10 +479,11 @@ print '
   </div>  
 </div>
 </form>
-<!--  End of Add Integrations -->  
     </section>
-    <section id="methods" class="tab-panel">
+<!--  End of Add Integrations -->  
+
 <!--  Start of Add Integration Methods -->  
+    <section id="methods" class="tab-panel">
 
     <p id="integrations" class="pf-c-title pf-m-2xl">Add Integration Method</p>
 <form novalidate class="pf-c-form pf-m-horizontal" action="addIntegrationMethod.php">
@@ -459,8 +506,53 @@ print '
   </div>  
   </form>
   <!--  End of Add Integrations Methods -->  
+ </section>
+<!--  Start of Dashboard -->  
+    <section id="dashboard" class="tab-panel">
 
-    </section>
+    <p id="dashboard" class="pf-c-title pf-m-3xl">Telescope Dashboard</p>
+    <section class="pf-c-page__main-section pf-m-fill">
+      <div class="pf-l-gallery pf-m-gutter">
+<?php
+## Get domains & capabilities
+$getDomains = "select domain.description, domain.id from domain;";
+$domainResult = pg_query($getDomains) or die('Error message: ' . pg_last_error());
+# putAperture($row['id'])
+$i = 1;
+
+while ($row = pg_fetch_assoc($domainResult)) {
+print '  
+<div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-' . $i . '">
+<div class="pf-c-card__header">';
+putAperture($row['id']);
+print '
+</div>
+<div class="pf-c-card__title">
+            <p id="card-' . $i . '-check-label">'. $row['description'] . '</p>
+            <div class="pf-c-content">
+              <small>Key Capabilities</small>
+            </div>
+          </div>
+          <div class="pf-c-card__body">
+          <div class="pf-c-content">';
+	$getCapabilities = "select capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = '" . $row['id'] . "' and capability.flag_id = flag.id;";
+	$capabilityResult = pg_query($getCapabilities) or die('Error message: ' . pg_last_error());
+	while ($capRow = pg_fetch_assoc($capabilityResult)) {
+       print putIcon($capRow['flag'], $capRow['capability']);
+     }
+       $i++;
+print "</div></div></div>";
+}
+# each capability
+
+
+?>
+
+  <!--  End of Add Integrations Methods -->  
+ </section>
+  <!--  End of Dashboard -->  
+
+   
 </div>
 </div>
 
