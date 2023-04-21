@@ -43,7 +43,6 @@ print '          	<li class="toggle-label">
   </span>
   <p class="toggle-capability">' . $row['capability'] . '</p>
   </li>
-  
 </label>';
 }
 }
@@ -86,6 +85,52 @@ print '
 }
 }
 
+
+function putToggleItems() {
+$selectDomains = "select * from domain;";
+$domainResults = pg_query($selectDomains) or die('Error message: ' . pg_last_error());
+$i = 1; 
+while ($row = pg_fetch_assoc($domainResults)) {
+print '
+<div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-' . $i . '">
+          <div class="pf-c-card__title">
+            <p id="card-' . $i . '-check-label">' . $row["description"] . '</p>
+            <div class="pf-c-content">
+              <small>Key Capabilities</small>
+            </div>
+          </div>
+          <div class="pf-c-card__body">
+          <div class="pf-c-content">
+          ';
+$qq = "select capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = '" . $row['id'] . "' and capability.flag_id = flag.id;";
+$result = pg_query($qq) or die('Error message: ' . pg_last_error());
+while ($row = pg_fetch_assoc($result)) {
+if ($row['flag'] == "green") {
+	$checked = "checked";
+} else {
+	$checked = "";
+}
+
+print '          	<div class="toggle-label"> 
+<label class="pf-c-switch" for="' . $row['id'] . '">
+  <input class="pf-c-switch__input" type="checkbox" name="capability-' . $row['id'] . '" id="' . $row['id'] . '" aria-labelledby="' . $row['id'] . '-on" ' . $checked . ' />
+  <span class="pf-c-switch__toggle">
+    <span class="pf-c-switch__toggle-icon">
+      <i class="fas fa-check" aria-hidden="true"></i>
+    </span>
+  </span>
+  <p class="toggle-capability">' . $row['capability'] . '</p>
+  </div>
+</label>';
+}          
+print '          	         	
+         </div>
+          </div>
+        </div>';	
+$i++;        
+}
+
+}
 
 ?>    
     
@@ -161,8 +206,6 @@ print '
        $i++;
 print "</div></div></div>";
 }
-# each capability
-
 
 ?>
 </section>
@@ -172,17 +215,20 @@ print "</div></div></div>";
 
 
 
-    <section id="toggle" class="tab-panel">
+
     <!-- Start of Toggle -->
-<form id="toggle" class="pf-c-form" action="tmp.php" novalidate>
+    
+    
+    
+    <section id="toggle" class="tab-panel">
+
+<form id="toggle" class="pf-c-form" action="updateToggle.php" novalidate>
     <p class="pf-c-title pf-m-3xl">Telescope Toggle</p>
       <div class="pf-l-gallery pf-m-gutter">
- 
 
-        <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
-          <div class="pf-c-card__header">
-            
-          </div>
+<!-- CHANGE TO GET DYNAMIC NAMES -->
+ <?php putToggleItems(); ?>
+        <!-- <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
           <div class="pf-c-card__title">
             <p id="card-1-check-label">Infrastructure Security</p>
             <div class="pf-c-content">
@@ -193,18 +239,14 @@ print "</div></div></div>";
           <ul>
           	<?php
 				putToggles(1);          	
-          	?>     	
-          	
+          	?>     	          	
           </ul>
          
           </div>
         </div>
         
+        
         <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
-          <div class="pf-c-card__header">
-
-            
-          </div>
           <div class="pf-c-card__title">
             <p id="card-1-check-label">Data Security</p>
             <div class="pf-c-content">
@@ -223,10 +265,6 @@ print "</div></div></div>";
         </div>        
 
         <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
-          <div class="pf-c-card__header">
-
-            
-          </div>
           <div class="pf-c-card__title">
             <p id="card-1-check-label">Code Security</p>
             <div class="pf-c-content">
@@ -246,10 +284,6 @@ print "</div></div></div>";
         </div>
  
        <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
-          <div class="pf-c-card__header">
-
-            
-          </div>
           <div class="pf-c-card__title">
             <p id="card-1-check-label">Integration Security</p>
             <div class="pf-c-content">
@@ -269,10 +303,6 @@ print "</div></div></div>";
         </div> 
  
        <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
-          <div class="pf-c-card__header">
-
-            
-          </div>
           <div class="pf-c-card__title">
             <p id="card-1-check-label">Monitoring & Logging Security</p>
             <div class="pf-c-content">
@@ -289,13 +319,14 @@ print "</div></div></div>";
           
           <br> 
           </div>
-        </div>
+        </div>   -->
   <div class="pf-c-form__group pf-m-action">
     <div class="pf-c-form__actions">
       <button class="pf-c-button pf-m-primary" type="submit">Submit Updates</button>
     </div>
   </div>        
 </form>  
+
 <!-- End of Toggle -->     
   </section>
     <section id="integrations" class="tab-panel">
