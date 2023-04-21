@@ -108,20 +108,70 @@ print '
 <div class="tabset">
 
   <!-- Tab 1 -->
-  <input type="radio" name="tabset" id="tab1" aria-controls="toggle" checked>
-  <label for="tab1">Telescope Toggle</label>
-  <!-- Tab 2 -->
-  <input type="radio" name="tabset" id="tab2" aria-controls="integrations">
-  <label for="tab2">Integrations</label>
-  <!-- Tab 3 -->
-  <input type="radio" name="tabset" id="tab3" aria-controls="methods">
-  <label for="tab3">Integration Methods</label>
   <!-- Tab 4 -->
-  <input type="radio" name="tabset" id="tab4" aria-controls="dashboard">
-  <label for="tab4">Dashboard</label>
+  <input type="radio" name="tabset" id="tab1" aria-controls="dashboard" checked>
+  <label for="tab1">Dashboard</label>
+
+  <input type="radio" name="tabset" id="tab2" aria-controls="toggle">
+  <label for="tab2">Telescope Toggle</label>
+  <!-- Tab 2 -->
+  <input type="radio" name="tabset" id="tab3" aria-controls="integrations">
+  <label for="tab3">Integrations</label>
+  <!-- Tab 3 -->
+  <input type="radio" name="tabset" id="tab4" aria-controls="methods">
+  <label for="tab4">Integration Methods</label>
+
 
 <!-- Start of Toggle -->  
   <div class="tab-panels">
+
+<!--  Start of Dashboard -->  
+    <section id="dashboard" class="tab-panel">
+
+    <p id="dashboard" class="pf-c-title pf-m-3xl">Telescope Dashboard</p>
+    <section class="pf-c-page__main-section pf-m-fill">
+      <div class="pf-l-gallery pf-m-gutter">
+<?php
+## Get domains & capabilities
+$getDomains = "select domain.description, domain.id from domain;";
+$domainResult = pg_query($getDomains) or die('Error message: ' . pg_last_error());
+# putAperture($row['id'])
+$i = 1;
+
+while ($row = pg_fetch_assoc($domainResult)) {
+print '  
+<div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-' . $i . '">
+<div class="pf-c-card__header">';
+putAperture($row['id']);
+print '
+</div>
+<div class="pf-c-card__title">
+            <p id="card-' . $i . '-check-label">'. $row['description'] . '</p>
+            <div class="pf-c-content">
+              <small>Key Capabilities</small>
+            </div>
+          </div>
+          <div class="pf-c-card__body">
+          <div class="pf-c-content">';
+	$getCapabilities = "select capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = '" . $row['id'] . "' and capability.flag_id = flag.id;";
+	$capabilityResult = pg_query($getCapabilities) or die('Error message: ' . pg_last_error());
+	while ($capRow = pg_fetch_assoc($capabilityResult)) {
+       print putIcon($capRow['flag'], $capRow['capability']);
+     }
+       $i++;
+print "</div></div></div>";
+}
+# each capability
+
+
+?>
+
+</section>
+ </section>
+  <!--  End of Dashboard -->  
+
+
+
     <section id="toggle" class="tab-panel">
     <!-- Start of Toggle -->
 <form id="toggle" class="pf-c-form" action="tmp.php" novalidate>
@@ -507,50 +557,7 @@ print '
   </form>
   <!--  End of Add Integrations Methods -->  
  </section>
-<!--  Start of Dashboard -->  
-    <section id="dashboard" class="tab-panel">
 
-    <p id="dashboard" class="pf-c-title pf-m-3xl">Telescope Dashboard</p>
-    <section class="pf-c-page__main-section pf-m-fill">
-      <div class="pf-l-gallery pf-m-gutter">
-<?php
-## Get domains & capabilities
-$getDomains = "select domain.description, domain.id from domain;";
-$domainResult = pg_query($getDomains) or die('Error message: ' . pg_last_error());
-# putAperture($row['id'])
-$i = 1;
-
-while ($row = pg_fetch_assoc($domainResult)) {
-print '  
-<div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-' . $i . '">
-<div class="pf-c-card__header">';
-putAperture($row['id']);
-print '
-</div>
-<div class="pf-c-card__title">
-            <p id="card-' . $i . '-check-label">'. $row['description'] . '</p>
-            <div class="pf-c-content">
-              <small>Key Capabilities</small>
-            </div>
-          </div>
-          <div class="pf-c-card__body">
-          <div class="pf-c-content">';
-	$getCapabilities = "select capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = '" . $row['id'] . "' and capability.flag_id = flag.id;";
-	$capabilityResult = pg_query($getCapabilities) or die('Error message: ' . pg_last_error());
-	while ($capRow = pg_fetch_assoc($capabilityResult)) {
-       print putIcon($capRow['flag'], $capRow['capability']);
-     }
-       $i++;
-print "</div></div></div>";
-}
-# each capability
-
-
-?>
-
-  <!--  End of Add Integrations Methods -->  
- </section>
-  <!--  End of Dashboard -->  
 
    
 </div>
