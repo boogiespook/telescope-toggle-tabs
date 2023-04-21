@@ -165,8 +165,8 @@ print "</div></div></div>";
 
 
 ?>
-
 </section>
+<button  onClick="window.location.reload();" class="pf-c-button pf-m-primary" type="button">Refresh</button>
  </section>
   <!--  End of Dashboard -->  
 
