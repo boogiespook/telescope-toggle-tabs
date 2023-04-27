@@ -24,7 +24,7 @@ $db_connection = pg_connect("host=$pg_host port=5432  dbname=$pg_db user=$pg_use
 
 
 function putToggles($domain) {
-$qq = "select capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = $domain and capability.flag_id = flag.id;";
+$qq = "SELECT capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = $domain and capability.flag_id = flag.id ORDER BY capability;";
 $result = pg_query($qq) or die('Error message: ' . pg_last_error());
 while ($row = pg_fetch_assoc($result)) {
 if ($row['flag'] == "green") {
@@ -102,7 +102,7 @@ print '
           <div class="pf-c-card__body">
           <div class="pf-c-content">
           ';
-$qq = "select capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = '" . $row['id'] . "' and capability.flag_id = flag.id;";
+$qq = "select capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = '" . $row['id'] . "' and capability.flag_id = flag.id ORDER by capability;";
 $result = pg_query($qq) or die('Error message: ' . pg_last_error());
 while ($row = pg_fetch_assoc($result)) {
 if ($row['flag'] == "green") {
@@ -198,7 +198,7 @@ print '
           </div>
           <div class="pf-c-card__body">
           <div class="pf-c-content">';
-	$getCapabilities = "select capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = '" . $row['id'] . "' and capability.flag_id = flag.id;";
+	$getCapabilities = "select capability.id as id, capability.description as capability, flag.description as flag from capability,flag where domain_id = '" . $row['id'] . "' and capability.flag_id = flag.id ORDER BY capability;";
 	$capabilityResult = pg_query($getCapabilities) or die('Error message: ' . pg_last_error());
 	while ($capRow = pg_fetch_assoc($capabilityResult)) {
        print putIcon($capRow['flag'], $capRow['capability']);
@@ -228,98 +228,7 @@ print "</div></div></div>";
 
 <!-- CHANGE TO GET DYNAMIC NAMES -->
  <?php putToggleItems(); ?>
-        <!-- <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
-          <div class="pf-c-card__title">
-            <p id="card-1-check-label">Infrastructure Security</p>
-            <div class="pf-c-content">
-              <small>Key Capabilities</small>
-            </div>
-          </div>
-          <div class="pf-c-card__body">
-          <ul>
-          	<?php
-				putToggles(1);          	
-          	?>     	          	
-          </ul>
-         
-          </div>
-        </div>
         
-        
-        <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
-          <div class="pf-c-card__title">
-            <p id="card-1-check-label">Data Security</p>
-            <div class="pf-c-content">
-              <small>Key Capabilities</small>
-            </div>
-          </div>
-          <div class="pf-c-card__body">
-          <ul>
-         	<?php
-				putToggles(2);          	
-          	?>     	
-          </ul>
-<br>
-
-          </div>
-        </div>        
-
-        <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
-          <div class="pf-c-card__title">
-            <p id="card-1-check-label">Code Security</p>
-            <div class="pf-c-content">
-              <small>Key Capabilities</small>
-            </div>
-          </div>
-          <div class="pf-c-card__body">
-          <ul>
-         	<?php
-				putToggles(3);          	
-          	?>     	
-
-          </ul>
-          <br>
-         
-          </div>
-        </div>
- 
-       <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
-          <div class="pf-c-card__title">
-            <p id="card-1-check-label">Integration Security</p>
-            <div class="pf-c-content">
-              <small>Key Capabilities</small>
-            </div>
-          </div>
-          <div class="pf-c-card__body">
-          <ul>
-         	<?php
-				putToggles(4);          	
-          	?>     	
-
-          </ul>
-          <br>
-        
-          </div>
-        </div> 
- 
-       <div class="pf-c-card pf-m-selectable-raised pf-m-compact" id="card-1">
-          <div class="pf-c-card__title">
-            <p id="card-1-check-label">Monitoring & Logging Security</p>
-            <div class="pf-c-content">
-              <small>Key Capabilities</small>
-            </div>
-          </div>
-          <div class="pf-c-card__body">
-          <ul>
-         	<?php
-				putToggles(5);          	
-          	?>     	
-
-          </ul>
-          
-          <br> 
-          </div>
-        </div>   -->
   <div class="pf-c-form__group pf-m-action">
     <div class="pf-c-form__actions">
       <button class="pf-c-button pf-m-primary" type="submit">Submit Updates</button>
