@@ -222,7 +222,7 @@ print "</div></div></div>";
     
     <section id="toggle" class="tab-panel">
 
-<form id="toggle" class="pf-c-form" action="updateToggle.php" novalidate>
+<form id="toggle" class="pf-c-form" action="updateToggle.php" >
     <p class="pf-c-title pf-m-3xl">Telescope Toggle</p>
       <div class="pf-l-gallery pf-m-gutter">
 
@@ -336,7 +336,7 @@ print '
 <!--  Start of Add Integrations -->
     <p id="integrations" class="pf-c-title pf-m-2xl">Add Integration</p>
 
-<form novalidate class="pf-c-form" action="addIntegration.php">
+<form class="pf-c-form" action="addIntegration.php">
  <div class="pf-l-grid pf-m-all-6-col-on-md pf-m-gutter">
 
   <div class="pf-c-form__group">
@@ -358,7 +358,7 @@ print '
       </label>
     </div>
     <div class="pf-c-form__group-control">
-      <input class="pf-c-form-control" type="text" id="endpoint-url" name="endpoint-url" />
+      <input class="pf-c-form-control" type="text" id="endpoint-url" name="endpoint-url" required/>
     </div>
   </div>
   <div class="pf-c-form__group">
@@ -450,7 +450,7 @@ print '
           aria-live="polite"
         >Success criteria depends on the specific integration. For example it could be a number (such as a %) or boolean (true/false, yes/no)</p>
     <div class="pf-c-form__group-control">
-      <input class="pf-c-form-control" type="text" id="success-criteria" name="success-criteria" />
+      <input class="pf-c-form-control" type="text" id="success-criteria" name="success-criteria" required/>
     </div>
   </div> 
   
@@ -476,7 +476,7 @@ print '
     <section id="methods" class="tab-panel">
 
     <p id="integrations" class="pf-c-title pf-m-2xl">Add Integration Method</p>
-<form novalidate class="pf-c-form pf-m-horizontal" action="addIntegrationMethod.php">
+<form  class="pf-c-form pf-m-horizontal" action="addIntegrationMethod.php">
   <div class="pf-c-form__group">
     <div class="pf-c-form__group-label">
       <label class="pf-c-form__label" for="horizontal-form-name">
